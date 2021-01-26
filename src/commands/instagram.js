@@ -1,70 +1,34 @@
-exports.run = async (client, message, args, axios, prefix) => {
-  let colorList = [
-    "1752220",
-    "3066993",
-    "3447003",
-    "10181046",
-    "15844367",
-    "15105570",
-    "15158332",
-    "9807270",
-    "8359053",
-    "3426654",
-    "1146986",
-    "2067276",
-    "2123412",
-    "7419530",
-    "12745742",
-    "11027200",
-    "10038562",
-    "9936031",
-    "12370112",
-    "2899536",
-    "16580705",
-    "12320855",
-  ];
-  let colorRand = colorList[Math.floor(Math.random() * colorList.length)];
+// const Discord = require("discord.js");
+const { createCanvas, loadImage } = require('canvas');
+const request = require('node-superfetch');
+const { MessageEmbed } = require('discord.js');
+const fetch = require("node-fetch");
 
-  if (!args.length)
-    return message.channel.send(`*Use:* ${"`"}${prefix}instagram @username${"`"}`);
+module.exports = {
+ name: "instagram",
+  aliases: ["ig", "insta"],
+  category: "socmed",
+  description: "share instagram",
+  run: async (client, message, args, user) => { 
+        let prefix = process.env.PREFIX
+    if (message.author.bot) return;
+    if(!message.content.startsWith(prefix)) return;
 
-  try {
-    const username = args[0];
-    const response = await axios.get(`https://www.instagram.com/${username}/?__a=1`);
-    const { data } = response;
-
-    await message.channel.send({
-      embed: {
-        color: colorRand,
-        author: {
-          name: `${data["graphql"]["user"].full_name} (@${username})`,
-        },
-        thumbnail: {
-          url: data["graphql"]["user"].profile_pic_url,
-        },
-        fields: [
-          {
-            name: "Seguidores",
-            value: data["graphql"]["user"]["edge_followed_by"].count,
-            inline: true,
-          },
-          {
-            name: "Seguindo",
-            value: data["graphql"]["user"]["edge_follow"].count,
-            inline: true,
-          },
-          {
-            name: "Biografia",
-            value: data["graphql"]["user"].biography,
-          },
-        ],
-        //footer: {
-        //text: `Criado por Acacio De Lima`
-        //icon_url: 'https://i.imgur.com/1nrsIPc.png'
-        //},
-      },
-    });
-  } catch (error) {
-    message.channel.send("Usuário não encontrado.");
+      if(!args[0]) return message.channel.send("**Please usage :** `h,ig <your instagram name>`\n**Example :** `h,ig andrihermawan`")
+  
+let DelayMsg = await message.channel.send('**Loading...**')
+    setTimeout(() => {
+    let embed = new MessageEmbed()
+    //.setTitle('Instagram Search')
+    .setThumbnail(message.author.displayAvatarURL({dynamic : true}))
+    .setDescription(`<a:instagram:801033737952690236> Instagram: @**${args}**\n** <a:instagram:801033737952690236> Link Instagram: [Click Here](https://www.instagram.com/${args}/)**`)
+    .setColor("#2f3136")
+    .setFooter(`Message by ${message.author.username}`)
+    .setTimestamp(message.timestamp = Date.now())
+    
+   DelayMsg.edit(embed)
+  },5000)
+    
+    
   }
-};
+}
